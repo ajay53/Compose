@@ -11,19 +11,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,15 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
-import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.example.compose.ui.theme.ComposeTheme
 
@@ -50,21 +50,40 @@ class MainActivity : ComponentActivity() {
             ComposeTheme {
                 Surface(
                     modifier = Modifier
-                        .fillMaxWidth()
-//                        .fillMaxHeight()
-//                        .padding(10.dp)
-//                        .background(MaterialTheme.colorScheme.secondary)
+                        .fillMaxSize()
                 ) {
-//                    PreviewMessageCard()
-                    /*MessageCard(
-                        msg = Message("Author Name", "Bodyeeee"),
-                        modifier = Modifier
-                            .fillMaxWidth()
-//                            .background(MaterialTheme.colorScheme.secondary)
-                    )*/
-                    PreviewConversation(modifier = Modifier.fillMaxWidth())
+                    RootElement(modifier = Modifier.fillMaxSize())
+//                    PreviewConversation(modifier = Modifier.fillMaxWidth())
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RootElement(modifier: Modifier = Modifier) {
+    var shouldShowOnboarding by rememberSaveable {
+        mutableStateOf(true)
+    }
+    Surface(modifier) {
+        if (shouldShowOnboarding) {
+            OnboardingScreen(onContinueClicked = { shouldShowOnboarding = false })
+        } else {
+            PreviewConversation(modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+@Composable
+fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(text = "Welcome to Codelab Basics!")
+        Button(modifier = Modifier.padding(vertical = 20.dp), onClick = onContinueClicked) {
+            Text(text = "Continue")
         }
     }
 }
@@ -87,7 +106,7 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.width(10.dp))
 
         //to store expanded value locally in memory
-        var isExpanded by remember { mutableStateOf(false) }
+        var isExpanded by rememberSaveable { mutableStateOf(false) }
 
         //update surface as per expanded state
         val surfaceColor by animateColorAsState(
@@ -96,10 +115,13 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
         )
 
         Column(modifier = Modifier
-            .padding(vertical = 2.dp)
+            .padding(vertical = 5.dp)
             .clickable { isExpanded = !isExpanded }
             .fillMaxWidth()) {
             Text(
+                /*modifier = Modifier.border(
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                ),*/
                 text = msg.author,
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleLarge
@@ -136,6 +158,7 @@ fun Conversation(messages: List<Message>, modifier: Modifier) {
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(horizontal = 5.dp)
                         .height(1.dp)
                         .background(MaterialTheme.colorScheme.outline)
                 )
@@ -150,12 +173,18 @@ fun Conversation(messages: List<Message>, modifier: Modifier) {
     showBackground = true,
     name = "Dark Mode"
 )*/
-@Preview
+@Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun PreviewConversation(modifier: Modifier = Modifier) {
     ComposeTheme {
         Conversation(SampleData.conversationSample, modifier)
     }
+}
+
+@Preview(name = "Root", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Composable
+fun PreviewRootElement() {
+    RootElement(Modifier.fillMaxSize())
 }
 
 /*@Preview(name = "Light Mode")
@@ -164,7 +193,7 @@ fun PreviewConversation(modifier: Modifier = Modifier) {
     showBackground = true,
     name = "Dark Mode"
 )*/
-@Preview(showBackground = true, name = "Message Card", uiMode = Configuration.UI_MODE_NIGHT_NO)
+//@Preview(showBackground = true, name = "Message Card", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun PreviewMessageCard() {
     MessageCard(msg = Message("Author Name", "Bodyeeee"))
