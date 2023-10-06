@@ -7,14 +7,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -109,19 +114,33 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
         var isExpanded by rememberSaveable { mutableStateOf(false) }
 
         //update surface as per expanded state
-        val surfaceColor by animateColorAsState(
+        val surfaceColorAnimation by animateColorAsState(
             if (isExpanded) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
             label = "Body surface"
         )
 
+        //update padding as per expanded state
+        val extraPaddingAnimation by animateDpAsState(
+            if (isExpanded) 8.dp else 4.dp,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessLow
+            ),
+            label = "Extra Padding - Body"
+        )
+
         Column(modifier = Modifier
             .padding(vertical = 5.dp)
-            .clickable { isExpanded = !isExpanded }
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) { isExpanded = !isExpanded }
             .fillMaxWidth()) {
             Text(
                 /*modifier = Modifier.border(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
                 ),*/
+                modifier = Modifier.fillMaxHeight(),
                 text = msg.author,
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleLarge
@@ -131,7 +150,7 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
             Surface(
                 shape = MaterialTheme.shapes.medium,
                 shadowElevation = 1.dp,
-                color = surfaceColor,
+                color = surfaceColorAnimation,
                 modifier = Modifier
                     .animateContentSize()
                     .padding(horizontal = 2.dp)
@@ -141,7 +160,13 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
                     style = MaterialTheme.typography.bodyLarge,
                     maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     modifier = Modifier
-                        .padding(all = 4.dp)
+                        .padding(
+                            top = 4.dp,
+                            bottom = extraPaddingAnimation,
+                            start = 8.dp,
+                            end = 8.dp
+                        )
+//                        .padding(all = 4.dp)
                         .fillMaxWidth()
                 )
             }
