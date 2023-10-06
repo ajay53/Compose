@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -126,11 +127,12 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
                 dampingRatio = Spring.DampingRatioMediumBouncy,
                 stiffness = Spring.StiffnessLow
             ),
-            label = "Extra Padding - Body"
+            label = "Extra Padding - Body Text"
         )
 
         Column(modifier = Modifier
             .padding(vertical = 5.dp)
+            .background(Color.Green)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -145,6 +147,32 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.secondary,
                 style = MaterialTheme.typography.titleLarge
             )
+
+            Image(
+                painter = painterResource(id = R.drawable.ic_expand),
+                contentDescription = "expand_body_text",
+                modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                    .padding(5.dp)
+                    .background(Color.Blue, CircleShape)
+            )
+
+            /*Surface(
+                modifier = Modifier
+//                    .padding(15.dp)
+                    .align(Alignment.End)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_expand),
+                    contentDescription = "expand_body_text",
+                    modifier = Modifier
+//                        .width(30.dp)
+//                        .height(30.dp)
+                        .padding(20.dp)
+                        .background(Color.Blue, CircleShape)
+                )
+            }*/
             Spacer(modifier = Modifier.height(2.dp))
 
             Surface(
@@ -206,7 +234,7 @@ fun PreviewConversation(modifier: Modifier = Modifier) {
     }
 }
 
-@Preview(name = "Root", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
+//@Preview(name = "Root", showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun PreviewRootElement() {
     RootElement(Modifier.fillMaxSize())
