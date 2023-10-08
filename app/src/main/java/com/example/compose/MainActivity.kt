@@ -30,6 +30,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -45,6 +47,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.compose.ui.theme.ComposeTheme
@@ -124,55 +128,67 @@ fun MessageCard(msg: Message, modifier: Modifier = Modifier) {
         val extraPaddingAnimation by animateDpAsState(
             if (isExpanded) 8.dp else 4.dp,
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
+                dampingRatio = Spring.DampingRatioHighBouncy,
                 stiffness = Spring.StiffnessLow
             ),
             label = "Extra Padding - Body Text"
         )
 
-        Column(modifier = Modifier
-            .padding(vertical = 5.dp)
-            .background(Color.Green)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) { isExpanded = !isExpanded }
-            .fillMaxWidth()) {
-            Text(
-                /*modifier = Modifier.border(
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
-                ),*/
-                modifier = Modifier.fillMaxHeight(),
-                text = msg.author,
-                color = MaterialTheme.colorScheme.secondary,
-                style = MaterialTheme.typography.titleLarge
-            )
+        Column(
+            modifier = Modifier
+                .padding(vertical = 5.dp)
+//                .background(Color.Yellow)
+                /*.clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) { isExpanded = !isExpanded }*/
+                .fillMaxWidth()
+        ) {
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_expand),
-                contentDescription = "expand_body_text",
+            Row(
                 modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                    .padding(5.dp)
-                    .background(Color.Blue, CircleShape)
-            )
-
-            /*Surface(
-                modifier = Modifier
-//                    .padding(15.dp)
-                    .align(Alignment.End)
+                    .fillMaxWidth()
+                    .padding(vertical = 5.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(
+                    /*modifier = Modifier.border(
+                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
+                    ),*/
+                    modifier = Modifier
+                        .fillMaxHeight()
+//                        .background(Color.Cyan)
+                        .align(alignment = Alignment.CenterVertically),
+                    text = msg.author,
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleLarge
+                )
+
+                /*IconButton(onClick = { isExpanded = !isExpanded }) {
+                    Icon(imageVector = R.drawable.ic_expand, null)
+                }*/
+
                 Image(
-                    painter = painterResource(id = R.drawable.ic_expand),
+                    painter = if (isExpanded) {
+                        painterResource(id = R.drawable.ic_collapse)
+                    } else {
+                        painterResource(
+                            id = R.drawable.ic_expand
+                        )
+                    },
                     contentDescription = "expand_body_text",
                     modifier = Modifier
-//                        .width(30.dp)
-//                        .height(30.dp)
-                        .padding(20.dp)
-                        .background(Color.Blue, CircleShape)
+                        .size(35.dp)
+                        .clip(CircleShape)
+                        .clickable(
+//                            interactionSource = remember { MutableInteractionSource() },
+//                            indication = null
+                        ) { isExpanded = !isExpanded }
+//                        .background(Color.Blue, CircleShape)
                 )
-            }*/
+            }
+
             Spacer(modifier = Modifier.height(2.dp))
 
             Surface(
